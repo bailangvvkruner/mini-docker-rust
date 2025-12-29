@@ -8,7 +8,8 @@ FROM rust:alpine AS builder
 # if needed, add additional dependencies here
 # RUN apk add --no-cache musl-dev
 RUN set -eux \
-    # && mkdir -p /app \
+    && mkdir -p /app \
+    && cd /app \
     && apk add --no-cache --no-scripts --virtual .build-deps \
     musl-dev \
     # libgcc \
@@ -21,12 +22,12 @@ RUN set -eux \
     # set the workdir and copy the source into it
     # WORKDIR /app
     # COPY ./ /app
-    && git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust /app \
+    && git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust . \
     \
     # do a release build
     # RUN cargo build --release
     # RUN strip target/release/mini-docker-rust
-    && cd /app \
+    # && cd /app \
     && RUSTFLAGS="-C target-feature=-crt-static" cargo build --release \
     && strip target/release/mini-docker-rust
 
