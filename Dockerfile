@@ -21,12 +21,12 @@ RUN set -eux \
     # set the workdir and copy the source into it
     # WORKDIR /app
     # COPY ./ /app
-    && git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust . \
+    && git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust /app \
     \
     # do a release build
     # RUN cargo build --release
     # RUN strip target/release/mini-docker-rust
-    # && cd /app \
+    && cd /app \
     && RUSTFLAGS="-C target-feature=-crt-static" cargo build --release \
     && strip target/release/mini-docker-rust
 
