@@ -21,7 +21,7 @@ RUN set -eux \
     # set the workdir and copy the source into it
     # WORKDIR /app
     # COPY ./ /app
-    && git clone -b main https://github.com/bailangvvkruner/mini-docker-rust --depth 1 . \
+    && git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust . \
     \
     # do a release build
     # RUN cargo build --release
