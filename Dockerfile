@@ -8,7 +8,7 @@ FROM rust:alpine AS builder
 # if needed, add additional dependencies here
 # RUN apk add --no-cache musl-dev
 RUN set -eux \
-    && mkdir -p /app \
+    # && mkdir -p /app \
     && apk add --no-cache --no-scripts --virtual .build-deps \
     musl-dev \
     # libgcc \
@@ -26,6 +26,7 @@ RUN set -eux \
     # do a release build
     # RUN cargo build --release
     # RUN strip target/release/mini-docker-rust
+    # && cd /app \
     && RUSTFLAGS="-C target-feature=-crt-static" cargo build --release \
     && strip target/release/mini-docker-rust
 
