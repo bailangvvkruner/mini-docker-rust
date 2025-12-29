@@ -3,22 +3,31 @@
 FROM rust:alpine AS builder
 
 # This is important, see https://github.com/rust-lang/docker-rust/issues/85
-ENV RUSTFLAGS="-C target-feature=-crt-static"
+# ENV RUSTFLAGS="-C target-feature=-crt-static"
 
 # if needed, add additional dependencies here
 # RUN apk add --no-cache musl-dev
-RUN apk add --no-cache --no-scripts --virtual .build-deps \
+RUN set -eux \
+    && mkdir -p /app \
+    && apk add --no-cache --no-scripts --virtual .build-deps \
     musl-dev \
     # libgcc \
-    git
-
-# set the workdir and copy the source into it
-WORKDIR /app
-COPY ./ /app
-
-# do a release build
-RUN cargo build --release
-RUN strip target/release/mini-docker-rust
+    git \
+    # 尝试安装 upx，如果不可用则继续（某些架构可能不支持）
+    \
+    && apk add --no-cache --no-scripts --virtual .upx-deps \
+        upx 2>/dev/null || echo "upx not available, skipping compression" \
+    \
+    # set the workdir and copy the source into it
+    # WORKDIR /app
+    # COPY ./ /app
+    && git clone -b static https://github.com/bailangvvkruner/wrk --depth 1 . \
+    \
+    # do a release build
+    # RUN cargo build --release
+    # RUN strip target/release/mini-docker-rust
+    && RUSTFLAGS="-C target-feature=-crt-static" cargo build --release \
+    && strip target/release/mini-docker-rust
 
 
 # use a plain alpine image, the alpine version needs to match the builder
@@ -32,9 +41,9 @@ FROM scratch AS final
 
 # 复制动态链接所需的库文件
 # musl libc 加载器
-COPY --from=builder /lib/ld-musl-x86_64.so.1 /lib/
+# COPY --from=builder /lib/ld-musl-x86_64.so.1 /lib/
 # GCC 运行时库
-COPY --from=builder /usr/lib/libgcc_s.so.1 /usr/lib/
+# COPY --from=builder /usr/lib/libgcc_s.so.1 /usr/lib/
 
 # copy the binary into the final image
 # COPY --from=0 /app/target/release/mini-docker-rust .
