@@ -10,7 +10,7 @@ WORKDIR /app
 # if needed, add additional dependencies here
 # RUN apk add --no-cache musl-dev
 RUN set -eux \
-    FILENAME=mini-docker-rust
+    && FILENAME=mini-docker-rust \
     # && mkdir -p /app \
     && apk add --no-cache --no-scripts --virtual .build-deps \
     musl-dev \
