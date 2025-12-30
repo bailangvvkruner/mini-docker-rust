@@ -21,7 +21,7 @@ RUN set -eux \
 
 # do a release build
 RUN cargo build --release --target="x86_64-unknown-linux-musl"
-RUN find /target/ -type f -name '*' -exec strip {} \;
+RUN find target/ -type f -name '*' -exec strip {} \;
 
 # RUN strip target/release/mini-docker-rust
 # RUN strip target/release/*
