@@ -20,11 +20,23 @@ RUN set -eux \
     && git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust /app
 
 # do a release build
-RUN cargo build --release
-# RUN set -eux \
-#     && cargo build --release --target=x86_64-unknown-linux-musl
+# RUN cargo build --release
+RUN case "$ARCH" in \
+    386|i686) TARGET="i686-unknown-linux-musl" ;; \
+    x86_64|amd64) TARGET="x86_64-unknown-linux-musl" ;; \
+    armv6|arm/v6) TARGET="arm-unknown-linux-musleabi" ;; \
+    armv7|arm/v7) TARGET="armv7-unknown-linux-musleabihf" ;; \
+    aarch64|arm64|arm64/v8) TARGET="aarch64-unknown-linux-musl" ;; \
+    ppc64le) TARGET="powerpc64le-unknown-linux-musl" ;; \
+    riscv64) TARGET="riscv64gc-unknown-linux-musl" ;; \
+    s390x) TARGET="s390x-unknown-linux-musl" ;; \
+    *) echo "Unsupported architecture: $ARCH" && exit 1 ;; \
+    esac && \
+    cargo build --release --target=$TARGET
+    # && find /usr/src/ -type f -name '*.so' -exec strip {} \; &&
 
-RUN strip target/release/mini-docker-rust
+# RUN strip target/release/mini-docker-rust
+RUN strip target/release/*
 
 
 # use a plain alpine image, the alpine version needs to match the builder
@@ -38,7 +50,8 @@ FROM alpine:latest
 
 # copy the binary into the final image
 # COPY --from=0 /app/target/release/mini-docker-rust .
-COPY --from=builder /app/target/release/mini-docker-rust .
+# COPY --from=builder /app/target/release/mini-docker-rust .
+COPY --from=builder /app/target/release/* .
 
 # set the binary as entrypoint
 ENTRYPOINT ["/mini-docker-rust"]
