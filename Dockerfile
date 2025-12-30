@@ -20,10 +20,8 @@ RUN set -eux \
     && git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust /app
 
 # do a release build
-# RUN cargo build --release
-RUN cargo build --release --target="x86_64-unknown-linux-musl" \
-    # && ls -l target/release/
-    && find /target/ -type f -name '*' -exec strip {} \;
+RUN cargo build --release --target="x86_64-unknown-linux-musl"
+RUN find /target/ -type f -name '*' -exec strip {} \;
 
 # RUN strip target/release/mini-docker-rust
 # RUN strip target/release/*
