@@ -50,7 +50,7 @@ FROM scratch AS final
 
 # copy the binary into the final image
 # COPY --from=0 /app/target/release/mini-docker-rust .
-COPY --from=builder /app/target/release/mini-docker-rust .
+COPY --from=builder /app/target/release/mini-docker-rust /mini-docker-rust
 
 # set the binary as entrypoint
 ENTRYPOINT ["/mini-docker-rust"]
