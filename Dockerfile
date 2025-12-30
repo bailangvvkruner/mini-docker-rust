@@ -33,7 +33,7 @@ RUN set -eux \
     && strip target/release/$FILENAME \
     # && (upx --best --lzma mini-docker-rust 2>/dev/null || echo "upx compression skipped") \
     # 清理Go缓存和临时文件以释放空间
-    && du -b $FILENAME
+    && du -b target/release/$FILENAME
 
 
 # use a plain alpine image, the alpine version needs to match the builder
