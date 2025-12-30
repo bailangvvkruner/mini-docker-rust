@@ -5,10 +5,12 @@ FROM rust:alpine AS builder
 # This is important, see https://github.com/rust-lang/docker-rust/issues/85
 # ENV RUSTFLAGS="-C target-feature=-crt-static"
 
+WORKDIR /app
+
 # if needed, add additional dependencies here
 # RUN apk add --no-cache musl-dev
 RUN set -eux \
-    && mkdir -p /app \
+    # && mkdir -p /app \
     && apk add --no-cache --no-scripts --virtual .build-deps \
     musl-dev \
     # libgcc \
