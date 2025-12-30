@@ -10,6 +10,7 @@ WORKDIR /app
 # if needed, add additional dependencies here
 # RUN apk add --no-cache musl-dev
 RUN set -eux \
+    FILENAME=mini-docker-rust
     # && mkdir -p /app \
     && apk add --no-cache --no-scripts --virtual .build-deps \
     musl-dev \
@@ -29,13 +30,10 @@ RUN set -eux \
     # RUN cargo build --release
     # RUN strip target/release/mini-docker-rust
     && RUSTFLAGS="-C target-feature=-crt-static" cargo build --release \
-    && strip target/release/mini-docker-rust \
+    && strip target/release/$FILENAME \
     # && (upx --best --lzma mini-docker-rust 2>/dev/null || echo "upx compression skipped") \
     # 清理Go缓存和临时文件以释放空间
-    && go clean -modcache \
-    && go clean -cache \
-    && rm -rf /tmp/go-build* \
-    && rm -rf /root/.cache/go-build
+    && du -b $FILENAME
 
 
 # use a plain alpine image, the alpine version needs to match the builder
