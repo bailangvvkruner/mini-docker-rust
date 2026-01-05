@@ -30,8 +30,8 @@ RUN find target/ -type f -name '*' -exec strip {} \;
 
 # use a plain alpine image, the alpine version needs to match the builder
 # FROM alpine:3.19
-# FROM alpine:latest
-FROM busybox:musl
+FROM alpine:latest
+# FROM busybox:musl
 
 # if needed, install additional dependencies here
 # RUN apk add --no-cache --no-scripts --virtual .run-deps \
