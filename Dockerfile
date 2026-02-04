@@ -1,6 +1,7 @@
 # Start with a rust alpine image
 # FROM rust:1-alpine3.19
-FROM rust:alpine
+# FROM rust:alpine
+FROM clux/muslrust:stable AS builder
 
 # This is important, see https://github.com/rust-lang/docker-rust/issues/85
 ENV RUSTFLAGS="-C target-feature=-crt-static"
@@ -35,7 +36,8 @@ RUN set -eux \
     libgcc
 
 # copy the binary into the final image
-COPY --from=0 /tmp/target/release/mini-docker-rust .
+# COPY --from=0 /tmp/target/release/mini-docker-rust .
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/mini-docker-rust /mini-docker-rust
 
 # set the binary as entrypoint
 ENTRYPOINT ["/mini-docker-rust"]
