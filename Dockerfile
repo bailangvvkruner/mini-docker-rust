@@ -13,9 +13,16 @@ RUN set -eux && \
     musl-dev \
     git \
     && \
+    # 尝试安装 upx，如果不可用则继续（某些架构可能不支持）
+    apk add --no-cache --no-scripts --virtual .upx-deps \
+        upx 2>/dev/null || echo "upx not available, skipping compression" \
+    \
+    && \
     git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust . && \
     cargo build --release && \
-    strip target/release/mini-docker-rust
+    strip target/release/mini-docker-rust && \
+    # 尝试压缩二进制文件（如果 upx 可用）
+    upx --best --lzma target/release/mini-docker-rust 2>/dev/null || echo "upx not available, skipping compression"
 
 # use a plain alpine image, the alpine version needs to match the builder
 # FROM alpine:3.19
