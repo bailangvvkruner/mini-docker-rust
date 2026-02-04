@@ -6,22 +6,15 @@ FROM rust:alpine
 ENV RUSTFLAGS="-C target-feature=-crt-static"
 
 # if needed, add additional dependencies here
-RUN set -eux \
-    && apk add --no-cache --no-scripts --virtual .build-deps \
+RUN set -eux && \
+    cd /tmp && \
+    apk add --no-cache --no-scripts --virtual .build-deps \
     # 构建依赖
     musl-dev \
-    git
-
-# set the workdir and copy the source into it
-WORKDIR /app
-# COPY ./ /app
-
-RUN set -eux \
-    && git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust /app
-
-# do a release build
-RUN cargo build --release
-RUN strip target/release/mini-docker-rust
+    git && \
+    git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust /app && \
+    cargo build --release && \
+    strip target/release/mini-docker-rust
 
 # use a plain alpine image, the alpine version needs to match the builder
 # FROM alpine:3.19
