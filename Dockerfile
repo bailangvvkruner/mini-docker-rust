@@ -11,8 +11,9 @@ RUN set -eux && \
     apk add --no-cache --no-scripts --virtual .build-deps \
     # 构建依赖
     musl-dev \
-    git && \
-    git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust /app && \
+    git \
+    && \
+    git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust . && \
     cargo build --release && \
     strip target/release/mini-docker-rust
 
@@ -21,10 +22,12 @@ RUN set -eux && \
 FROM alpine:latest
 
 # if needed, install additional dependencies here
+RUN set -eux \
+    && \
+    apk add --no-cache --no-scripts --virtual .run-deps \
+    libgcc
 
-RUN apk add --no-cache libgcc
 # copy the binary into the final image
-
 COPY --from=0 /tmp/target/release/mini-docker-rust .
 
 # set the binary as entrypoint
