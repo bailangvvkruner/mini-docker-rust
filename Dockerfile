@@ -21,13 +21,16 @@ RUN set -eux && \
     && \
     git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust . && \
     cargo build --release && \
-    strip target/release/mini-docker-rust && \
+    # strip target/release/mini-docker-rust && \
+    strip target/x86_64-unknown-linux-musl/release/mini-docker-rust && \
     # 尝试压缩二进制文件（如果 upx 可用）
-    upx --best --lzma target/release/mini-docker-rust 2>/dev/null || echo "upx not available, skipping compression"
+    # upx --best --lzma target/release/mini-docker-rust 2>/dev/null || echo "upx not available, skipping compression"
+    upx --best --lzma2 target/x86_64-unknown-linux-musl/release/mini-docker-rust 2>/dev/null || echo "upx not available, skipping compression"
 
 # use a plain alpine image, the alpine version needs to match the builder
 # FROM alpine:3.19
-FROM alpine:latest
+# FROM alpine:latest
+FROM scratch
 
 # if needed, install additional dependencies here
 RUN set -eux \
@@ -37,7 +40,7 @@ RUN set -eux \
 
 # copy the binary into the final image
 # COPY --from=0 /tmp/target/release/mini-docker-rust .
-COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/mini-docker-rust /mini-docker-rust
+COPY --from=builder /tmp/target/x86_64-unknown-linux-musl/release/mini-docker-rust /mini-docker-rust
 
 # set the binary as entrypoint
 ENTRYPOINT ["/mini-docker-rust"]
