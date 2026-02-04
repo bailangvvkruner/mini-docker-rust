@@ -25,7 +25,7 @@ FROM alpine:latest
 RUN apk add --no-cache libgcc
 # copy the binary into the final image
 
-COPY --from=0 /app/target/release/mini-docker-rust .
+COPY --from=0 /tmp/target/release/mini-docker-rust .
 
 # set the binary as entrypoint
 ENTRYPOINT ["/mini-docker-rust"]
