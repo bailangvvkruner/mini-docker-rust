@@ -21,7 +21,7 @@ RUN set -eux && \
     && \
     git clone --depth 1 -b main https://github.com/bailangvvkruner/mini-docker-rust . && \
     cargo build --release && \
-    strip target/release/mini-docker-rust && \
+    strip --strip-all target/release/mini-docker-rust && \
     # strip target/x86_64-unknown-linux-musl/release/mini-docker-rust && \
     # 尝试压缩二进制文件（如果 upx 可用）
     upx --best --lzma target/release/mini-docker-rust 2>/dev/null || echo "upx not available, skipping compression"
